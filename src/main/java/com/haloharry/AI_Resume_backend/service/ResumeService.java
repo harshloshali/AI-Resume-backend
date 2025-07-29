@@ -1,5 +1,8 @@
 package com.haloharry.AI_Resume_backend.service;
 
+import java.io.IOException;
+import java.util.Map;
+
 public interface ResumeService {
-    String generateResumeResponse(String userResumeDescription);
+    Map<String, Object> generateResumeResponse(String userResumeDescription) throws IOException;
 }

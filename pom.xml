@@ -12,7 +12,7 @@
 	<artifactId>AI-Resume-backend</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>AI-Resume-backend</name>
-	<description>Demo project for Spring Boot</description>
+	<description>Backend of HaloHarry's AI Powered Resume Builder</description>
 	<url/>
 	<licenses>
 		<license/>
@@ -44,6 +44,12 @@
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
+		</dependency>
+
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20210307</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
