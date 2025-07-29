@@ -54,37 +54,93 @@ public class ResumeServiceImpl implements ResumeService{
         return template;
     }
 
+//    public static Map<String, Object> parseMultipleResponses(String response) {
+//        Map<String, Object> jsonResponse = new HashMap<>();
+//
+//        // Extract content inside <think> tags
+//        int thinkStart = response.indexOf("<think>") + 7;
+//        int thinkEnd = response.indexOf("</think>");
+//        if (thinkStart != -1 && thinkEnd != -1) {
+//            String thinkContent = response.substring(thinkStart, thinkEnd).trim();
+//            jsonResponse.put("think", thinkContent);
+//        } else {
+//            jsonResponse.put("think", null); // Handle missing <think> tags
+//        }
+//
+//        // Extract content that is in JSON format
+//        int jsonStart = response.indexOf("```json") + 7; // Start after ```json
+//        int jsonEnd = response.lastIndexOf("```");       // End before ```
+//        if (jsonStart != -1 && jsonEnd != -1 && jsonStart < jsonEnd) {
+//            String jsonContent = response.substring(jsonStart, jsonEnd).trim();
+//            try {
+//                // Convert JSON string to Map using Jackson ObjectMapper
+//                ObjectMapper objectMapper = new ObjectMapper();
+//                Map<String, Object> dataContent = objectMapper.readValue(jsonContent, Map.class);
+//                jsonResponse.put("data", dataContent);
+//            } catch (Exception e) {
+//                jsonResponse.put("data", null); // Handle invalid JSON
+//                System.err.println("Invalid JSON format in the response: " + e.getMessage());
+//            }
+//        } else {
+//            jsonResponse.put("data", null); // Handle missing JSON
+//        }
+//
+//        return jsonResponse;
+//    }
     public static Map<String, Object> parseMultipleResponses(String response) {
         Map<String, Object> jsonResponse = new HashMap<>();
 
-        // Extract content inside <think> tags
+
+
         int thinkStart = response.indexOf("<think>") + 7;
         int thinkEnd = response.indexOf("</think>");
-        if (thinkStart != -1 && thinkEnd != -1) {
-            String thinkContent = response.substring(thinkStart, thinkEnd).trim();
-            jsonResponse.put("think", thinkContent);
+        if (thinkStart != -1 + 7 && thinkEnd != -1) {
+           String thinkContent = response.substring(thinkStart, thinkEnd).trim();
+           jsonResponse.put("think", thinkContent);
         } else {
-            jsonResponse.put("think", null); // Handle missing <think> tags
+            jsonResponse.put("think", null);
         }
 
-        // Extract content that is in JSON format
-        int jsonStart = response.indexOf("```json") + 7; // Start after ```json
-        int jsonEnd = response.lastIndexOf("```");       // End before ```
-        if (jsonStart != -1 && jsonEnd != -1 && jsonStart < jsonEnd) {
-            String jsonContent = response.substring(jsonStart, jsonEnd).trim();
+        int braceCount = 0;
+        int startIndex = -1;
+        int endIndex = -1;
+
+        for (int i = 0; i < response.length(); i++) {
+            char c = response.charAt(i);
+            if (c == '{') {
+                if (braceCount == 0) {
+                    startIndex = i;
+             }
+                braceCount++;
+            } else if (c == '}') {
+                braceCount--;
+                if (braceCount == 0 && startIndex != -1) {
+                    endIndex = i;
+                break;
+               }
+            }
+        }
+
+        if (startIndex != -1 && endIndex != -1) {
+            String jsonBlock = cleanJson(response.substring(startIndex, endIndex + 1));
+            System.out.println(jsonBlock);
             try {
-                // Convert JSON string to Map using Jackson ObjectMapper
-                ObjectMapper objectMapper = new ObjectMapper();
-                Map<String, Object> dataContent = objectMapper.readValue(jsonContent, Map.class);
-                jsonResponse.put("data", dataContent);
+                ObjectMapper mapper = new ObjectMapper();
+                Map<String, Object> data = mapper.readValue(jsonBlock, Map.class);
+                jsonResponse.put("data", data);
             } catch (Exception e) {
-                jsonResponse.put("data", null); // Handle invalid JSON
-                System.err.println("Invalid JSON format in the response: " + e.getMessage());
+                jsonResponse.put("data", null);
+                System.err.println("Failed to parse JSON block: " + e.getMessage());
             }
         } else {
-            jsonResponse.put("data", null); // Handle missing JSON
+            jsonResponse.put("data", null);
         }
 
         return jsonResponse;
+    }
+
+    private static String cleanJson(String input) {
+        // Remove trailing commas before closing array or object
+        return input.replaceAll(",(\\s*[}\\]])", "$1");
     }
  }
