@@ -8,6 +8,8 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -42,8 +44,14 @@ public class ResumeServiceImpl implements ResumeService{
     }
 
     String generatePromptFromFile(String filename) throws IOException {
-        Path path= new ClassPathResource(filename).getFile().toPath();
-        return Files.readString(path);
+        /*******Worked on local but doesn't work on cloud
+//        Path path= new ClassPathResource(filename).getFile().toPath();
+//        return Files.readString(path);
+
+         ********/
+        try (InputStream inputStream = new ClassPathResource(filename).getInputStream()) {
+            return new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+        }
     }
     String putvaluesToTemplate(String template, Map<String,String> values){
         for(Map.Entry<String,String> entry: values.entrySet()){
