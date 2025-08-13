@@ -7,4 +7,4 @@ COPY . .
 
 RUN ./mvnw clean package -DskipTests
 
-CMD ["java", "-jar", "target/ai-resume-backend-0.0.1-SNAPSHOT.jar"]
+CMD ["java", "-jar", "target/AI-Resume-backend-0.0.1-SNAPSHOT.jar"]
