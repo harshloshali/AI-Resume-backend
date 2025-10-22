@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.Map;
 
 @RestController
-//@CrossOrigin("*")
+@CrossOrigin(origins = "https://haloshali-ai-resume-builder.vercel.app/")
 @RequestMapping("/api/v1/resume")
 public class ResumeController {
 
